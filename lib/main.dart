@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:soccerlocker/menu.dart'; // Impor file menu.dart
+import 'package:soccerlocker/menu.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,9 +11,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SoccerLocker', // Judul aplikasi Anda
+      title: 'SoccerLocker',
       theme: ThemeData(
-        primarySwatch: Colors.indigo, // Tema utama
+        primarySwatch: Colors.indigo,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       // Langsung panggil MyHomePage dari menu.dart

@@ -22,12 +22,12 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'SoccerLocker', // Judul AppBar
+          'SoccerLocker',
         ),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
-      // Menggunakan GridView seperti di Tutorial 6
+      // Menggunakan GridView
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -36,7 +36,7 @@ class MyHomePage extends StatelessWidget {
               const Padding(
                 padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
                 child: Text(
-                  'Welcome to SoccerLocker!', // Judul Halaman
+                  'Welcome to SoccerLocker!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 30,
@@ -80,7 +80,7 @@ class ShopCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         // Aksi onTap untuk menampilkan Snackbar
         onTap: () {
-          // Menampilkan SnackBar sesuai permintaan Tugas 7
+          // Menampilkan SnackBar
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
