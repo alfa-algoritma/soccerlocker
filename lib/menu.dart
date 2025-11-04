@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-
-// Class untuk menampung data item (diadaptasi dari ItemHomepage di Tutorial 6)
-// Sesuai Tugas 7, kita tambahkan properti Color
 class ShopItem {
   final String name;
   final IconData icon;
@@ -10,11 +7,10 @@ class ShopItem {
   ShopItem(this.name, this.icon, this.color);
 }
 
-// Widget utama kita, diadaptasi dari MyHomePage di Tutorial 6 [cite: 767]
+// Widget utama SoccerLocker
 class MyHomePage extends StatelessWidget {
   MyHomePage({Key? key}) : super(key: key);
 
-  // Daftar item sesuai permintaan Tugas 7 [cite: 1616-1625]
   final List<ShopItem> items = [
     ShopItem("All Products", Icons.shopping_bag, Colors.blue),
     ShopItem("My Products", Icons.inventory, Colors.green),
@@ -31,7 +27,7 @@ class MyHomePage extends StatelessWidget {
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
       ),
-      // Menggunakan GridView seperti di Tutorial 6 [cite: 955]
+      // Menggunakan GridView seperti di Tutorial 6
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -69,7 +65,7 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-// Custom widget untuk Card, diadaptasi dari ItemCard di Tutorial 6 [cite: 843]
+// Custom widget untuk Card
 class ShopCard extends StatelessWidget {
   final ShopItem item;
 
@@ -82,13 +78,12 @@ class ShopCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        // Aksi onTap untuk menampilkan Snackbar [cite: 859]
+        // Aksi onTap untuk menampilkan Snackbar
         onTap: () {
-          // Menampilkan SnackBar sesuai permintaan Tugas 7 [cite: 1626]
+          // Menampilkan SnackBar sesuai permintaan Tugas 7
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
-              // Pesan Sesuai Tugas 7 [cite: 1632-1634]
               content: Text("Kamu telah menekan tombol ${item.name}!"),
             ));
         },
