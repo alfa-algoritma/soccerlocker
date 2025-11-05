@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-class ShopItem {
+class ItemHomepage {
   final String name;
   final IconData icon;
   final Color color;
 
-  ShopItem(this.name, this.icon, this.color);
+  ItemHomepage(this.name, this.icon, this.color);
 }
 
 // Widget utama SoccerLocker
 class MyHomePage extends StatelessWidget {
-  MyHomePage({Key? key}) : super(key: key);
+  MyHomePage({super.key});
+  final String nama = "Muhammad Alfa Mubarok"; 
+  final String npm = "2406431391"; 
+  final String kelas = "D";
 
-  final List<ShopItem> items = [
-    ShopItem("All Products", Icons.shopping_bag, Colors.blue),
-    ShopItem("My Products", Icons.inventory, Colors.green),
-    ShopItem("Create Product", Icons.add_shopping_cart, Colors.red),
+  final List<ItemHomepage> items = [
+    ItemHomepage("All Products", Icons.shopping_bag, Colors.blue),
+    ItemHomepage("My Products", Icons.inventory, Colors.green),
+    ItemHomepage("Create Product", Icons.add_shopping_cart, Colors.red),
   ];
 
   @override
@@ -23,69 +26,109 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'SoccerLocker',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
       ),
-      // Menggunakan GridView
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                child: Text(
-                  'Welcome to SoccerLocker!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InfoCard(title: 'NPM', content: npm),
+                InfoCard(title: 'Name', content: nama),
+                InfoCard(title: 'Class', content: kelas),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+            Center(
+              child: Column(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(top: 16.0),
+                    child: Text(
+                      'Welcome to SoccerLocker!',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18.0,
+                      ),
+                    ),
                   ),
-                ),
+                  GridView.count(
+                    primary: true,
+                    padding: const EdgeInsets.all(20),
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    crossAxisCount: 3,
+                    shrinkWrap: true,
+                    children: items.map((ItemHomepage item) {
+                      return ItemCard(item);
+                    }).toList(),
+                  ),
+                ],
               ),
-              // GridView untuk menampilkan item-item
-              GridView.count(
-                primary: true,
-                padding: const EdgeInsets.all(20),
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                crossAxisCount: 3,
-                shrinkWrap: true,
-                children: items.map((ShopItem item) {
-                  // Menggunakan custom widget ShopCard
-                  return ShopCard(item);
-                }).toList(),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// Custom widget untuk Card
-class ShopCard extends StatelessWidget {
-  final ShopItem item;
+class InfoCard extends StatelessWidget {
+  final String title;
+  final String content;
 
-  const ShopCard(this.item, {Key? key}) : super(key: key);
+  const InfoCard({super.key, required this.title, required this.content});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2.0,
+      child: Container(
+        // Lebar diatur agar lebih responsif
+        width: MediaQuery.of(context).size.width * 0.28,
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              content,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ItemCard extends StatelessWidget {
+  final ItemHomepage item;
+
+  const ItemCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: item.color, // Menggunakan warna spesifik dari item 
+      color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        // Aksi onTap untuk menampilkan Snackbar
         onTap: () {
-          // Menampilkan SnackBar
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
-              content: Text("Kamu telah menekan tombol ${item.name}!"),
-            ));
+                content: Text("Kamu telah menekan tombol ${item.name}!")));
         },
         child: Container(
           padding: const EdgeInsets.all(8),
