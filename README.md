@@ -108,3 +108,68 @@ Saat kita memanggil fungsi seperti `ScaffoldMessenger.of(context)`, kita memberi
 | :--- | :--- | :--- | :--- |
 | **Hot Reload** | Sangat Cepat (< 1 detik) | **Terjaga** (Preserved) | Mengubah UI, *layout*, warna, teks. |
 | **Hot Restart** | Cepat (Beberapa detik) | **Hilang** (Reset) | Perubahan *state* besar, *hot reload* gagal. |
+
+---
+
+# Proyek SoccerLocker - Tugas 8 Pemrograman Berbasis Platform
+
+Ini adalah implementasi proyek untuk Tugas 8, sebuah aplikasi Flutter sederhana bertema toko sepak bola ("SoccerLocker").
+
+**Nama:** Muhammad Alfa Mubarok
+**NPM:** 2406431391
+**Kelas:** PBP D
+
+---
+
+## Jawaban Pertanyaan Tugas 8
+
+Berikut adalah jawaban untuk pertanyaan-pertanyaan yang ada pada Tugas 8.
+
+### 1. Perbedaan `Navigator.push()` dan `Navigator.pushReplacement()`
+
+Perbedaan utama terletak pada cara mereka mengelola *stack* (tumpukan) halaman:
+
+* **`Navigator.push()`:** Mendorong halaman baru **di atas** halaman saat ini.
+    * **Analogi:** Menumpuk buku baru di atas tumpukan buku.
+    * **Efek:** Halaman lama masih ada di bawahnya, dan pengguna bisa kembali ke halaman tersebut dengan menekan tombol "Back".
+    * **Kapan digunakan di SoccerLocker:** Digunakan saat membuka halaman **"Tambah Produk"** (`ProductFormPage`). Ini ideal karena setelah selesai mengisi form, pengguna pasti ingin kembali ke Halaman Utama.
+
+* **`Navigator.pushReplacement()`:** **Mengganti** halaman saat ini dengan halaman baru.
+    * **Analogi:** Mengambil buku teratas dari tumpukan dan langsung menggantinya dengan buku baru.
+    * **Efek:** Halaman lama dihancurkan dan dihapus dari tumpukan. Pengguna **tidak bisa** menekan "Back" untuk kembali ke halaman yang diganti.
+    * **Kapan digunakan di SoccerLocker:** Digunakan saat di *drawer* menekan **"Halaman Utama"**. Jika pengguna berada di halaman "Tambah Produk" dan menekan "Halaman Utama" di *drawer*, kita tidak ingin menumpuk halaman utama di atas form. Kita ingin mengganti halaman form dengan halaman utama.
+
+### 2. Pemanfaatan Hierarchy Widget (Scaffold, AppBar, Drawer)
+
+Saya memanfaatkan hierarki ini untuk menciptakan struktur yang konsisten:
+
+1. **`Scaffold`:** Saya gunakan sebagai "kerangka" dasar untuk setiap halaman baru, seperti `MyHomePage` dan `ProductFormPage`. `Scaffold` menyediakan slot yang sudah ditentukan, seperti `appBar` dan `drawer`.
+2. **`AppBar`:** Saya tempatkan di dalam `appBar` milik `Scaffold` di setiap halaman. Ini memastikan *branding* (`backgroundColor: Colors.indigo`) dan judul halaman selalu ada di posisi yang sama dan terlihat konsisten.
+3. **`Drawer`:** Saya membuat satu widget kustom `LeftDrawer` dan memasukkannya ke dalam slot `drawer` di `Scaffold` pada kedua halaman (`MyHomePage` dan `ProductFormPage`). Hasilnya, menu navigasi utama aplikasi saya konsisten dan bisa diakses dari mana saja.
+
+Dengan menggunakan tiga widget ini, saya tidak perlu membuat ulang *header* atau menu navigasi di setiap halaman. Saya hanya perlu fokus pada konten unik di dalam properti `body` dari `Scaffold`.
+
+### 3. Kelebihan Layout Widget (Padding, SingleChildScrollView, ListView)
+
+Widget-widget ini sangat penting untuk membuat form yang fungsional dan rapi:
+
+* **`Padding`:**
+    * **Kelebihan:** Memberikan "ruang napas" di sekitar elemen. Tanpa `Padding`, *field* form akan menempel di tepi layar dan menempel satu sama lain, membuatnya terlihat berantakan dan sulit digunakan.
+    * **Contoh Penggunaan:** Saya membungkus seluruh `Column` di `ProductFormPage` dengan `Padding(padding: const EdgeInsets.all(16.0))` untuk memberi jarak dari tepi layar. Saya juga menggunakan `Padding(padding: const EdgeInsets.symmetric(vertical: 8.0))` di antara setiap `TextFormField` agar tidak saling menempel.
+
+* **`SingleChildScrollView`:**
+    * **Kelebihan:** Membuat konten di dalamnya bisa di-*scroll* jika tidak muat di layar. Ini **wajib** untuk form. Saat pengguna mengetik dan *keyboard* virtual muncul, `SingleChildScrollView` memastikan pengguna bisa men-*scroll* ke *field* yang tersembunyi di bawah *keyboard*.
+    * **Contoh Penggunaan:** Di `ProductFormPage`, saya membungkus seluruh `Column` yang berisi *field* form dengan `SingleChildScrollView`. Ini menjamin halaman tetap bisa digunakan di layar kecil atau saat *keyboard* aktif.
+
+* **`ListView`:**
+    * **Kelebihan:** Mirip dengan `SingleChildScrollView` tetapi lebih optimal untuk daftar item yang panjang atau dinamis. `ListView` juga menyediakan *scrolling* secara otomatis.
+    * **Contoh Penggunaan:** Saya menggunakan `ListView` di `LeftDrawer`. Ini adalah pilihan ideal karena *drawer* pada dasarnya adalah daftar opsi menu, dan `ListView` memastikan daftar itu bisa di-*scroll* jika nanti opsinya bertambah banyak.
+
+### 4. Menyesuaikan Warna Tema (Konsistensi Brand)
+
+Saya menyesuaikan tema agar konsisten dengan *brand* "SoccerLocker" (yang saya asosiasikan dengan warna yang profesional dan terpercaya seperti biru tua/indigo) di file `main.dart`.
+
+* **`primarySwatch: Colors.indigo`:** Saya tidak menggunakan `Colors.blue` biasa. Saya memilih `Colors.indigo` sebagai `primarySwatch` (palet warna utama). Ini secara otomatis memberi tahu Flutter untuk menggunakan warna `indigo` yang lebih gelap dan profesional untuk `AppBar` di `ProductFormPage` dan `LeftDrawer`, serta turunan warna yang lebih terang untuk aksen.
+* **`scaffoldBackgroundColor: Colors.grey[100]`:** Saya juga mengatur warna latar belakang *default* untuk semua `Scaffold` menjadi abu-abu sangat muda. Ini memberi kontras yang lembut agar elemen-elemen di atasnya (seperti *card* form yang putih) terlihat lebih menonjol.
+
+Dengan mengatur tema di `main.dart`, saya tidak perlu menentukan `backgroundColor: Colors.indigo` di setiap `AppBar` secara manual. Tema ini berlaku secara global, memastikan konsistensi visual di seluruh aplikasi.

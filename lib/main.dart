@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:soccerlocker/menu.dart';
+import 'package:soccerlocker/screens/menu.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -11,9 +11,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SoccerLocker',
+      title: 'SoccerLocker', 
       theme: ThemeData(
         primarySwatch: Colors.indigo,
+        scaffoldBackgroundColor: Colors.grey[100],
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       // Langsung panggil MyHomePage dari menu.dart
