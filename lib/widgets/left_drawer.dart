@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:soccerlocker/screens/menu.dart';
 import 'package:soccerlocker/screens/product_form.dart';
+import 'package:soccerlocker/screens/list_product.dart';
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -38,12 +39,10 @@ class LeftDrawer extends StatelessWidget {
               ],
             ),
           ),
-
           ListTile(
             leading: const Icon(Icons.home_outlined),
             title: const Text('Halaman Utama'),
             onTap: () {
-              // Navigasi ke Halaman Utama
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -56,13 +55,22 @@ class LeftDrawer extends StatelessWidget {
             leading: const Icon(Icons.add_shopping_cart),
             title: const Text('Tambah Produk'),
             onTap: () {
-              // Navigasi ke Halaman Form
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const ProductFormPage(),
                 ),
               );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.list),
+            title: const Text('Daftar Produk'),
+            onTap: () {
+                Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductListPage()),
+                );
             },
           ),
         ],

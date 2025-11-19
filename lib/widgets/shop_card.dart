@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:soccerlocker/screens/product_form.dart';
+import 'package:soccerlocker/screens/list_product.dart';
+import 'package:soccerlocker/screens/login.dart';
 
 class ShopItem {
   final String name;
@@ -16,12 +20,14 @@ class ShopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
+
     return Material(
       color: item.color,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () {
+        onTap: () async {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
@@ -35,6 +41,33 @@ class ShopCard extends StatelessWidget {
                 builder: (context) => const ProductFormPage(),
               ),
             );
+          } else if (item.name == "All Products") { 
+             Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ProductListPage(),
+              ),
+            );
+          } else if (item.name == "Logout") {
+              final response = await request.logout(
+                  "https://muhammad-alfa41-playmax.pbp.cs.ui.ac.id/auth/logout/");
+              String message = response["message"];
+              if (context.mounted) {
+                  if (response['status']) {
+                      String uname = response["username"];
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("$message Sampai jumpa, $uname."),
+                      ));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
+                      );
+                  } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(message),
+                      ));
+                  }
+              }
           }
         },
         child: Container(

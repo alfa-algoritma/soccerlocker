@@ -173,3 +173,86 @@ Saya menyesuaikan tema agar konsisten dengan *brand* "SoccerLocker" (yang saya a
 * **`scaffoldBackgroundColor: Colors.grey[100]`:** Saya juga mengatur warna latar belakang *default* untuk semua `Scaffold` menjadi abu-abu sangat muda. Ini memberi kontras yang lembut agar elemen-elemen di atasnya (seperti *card* form yang putih) terlihat lebih menonjol.
 
 Dengan mengatur tema di `main.dart`, saya tidak perlu menentukan `backgroundColor: Colors.indigo` di setiap `AppBar` secara manual. Tema ini berlaku secara global, memastikan konsistensi visual di seluruh aplikasi.
+
+--- 
+
+# Proyek SoccerLocker - Tugas 9 Integrasi Web Django dengan Aplikasi Flutter
+
+**Nama:** Muhammad Alfa Mubarok  
+**NPM:** 2406431391  
+**Kelas:** PBP D
+
+---
+
+## Jawaban Pertanyaan Tugas 9
+
+### 1. Mengapa perlu membuat model Dart saat mengambil/mengirim data JSON?
+Kita perlu membuat model Dart (seperti `Product` class) untuk melakukan **serialisasi dan deserialisasi** data JSON.
+* **Type Safety:** Dart adalah bahasa *strongly-typed*. Model memastikan bahwa data yang kita gunakan di aplikasi memiliki tipe yang benar (misalnya `price` adalah `int`, `name` adalah `String`).
+* **Autocompletion:** Dengan model, IDE bisa memberikan saran (autocomplete) properti yang tersedia, mengurangi risiko *typo*.
+* **Maintainability:** Jika struktur data berubah, kita cukup mengubah modelnya di satu tempat.
+
+**Konsekuensi tanpa model:**
+Jika kita menggunakan `Map<String, dynamic>` mentah:
+* Kita harus mengakses data dengan string key (misal `data['name']`), yang rentan salah ketik.
+* Tidak ada validasi tipe otomatis; kita bisa tidak sengaja memasukkan `String` ke variabel `int`, yang menyebabkan *runtime error*.
+* Kode menjadi sulit dibaca dan dirawat.
+
+### 2. Fungsi package `http` dan `CookieRequest`
+* **`http`:** Package dasar untuk melakukan HTTP request (GET, POST, PUT, DELETE) ke server. Ini menangani komunikasi level rendah.
+* **`CookieRequest` (dari `pbp_django_auth`):** Wrapper di atas `http` yang dirancang khusus untuk Django.
+    * **Peran Utama:** Mengelola **session cookies** dan **CSRF tokens** secara otomatis.
+    * **Perbedaan:** `http` biasa tidak menyimpan *cookies* antar request secara otomatis. Tanpa `CookieRequest`, setiap kali kita request ke Django, Django akan menganggap kita sebagai pengguna baru (tidak login). `CookieRequest` menyimpan session ID sehingga status login terjaga.
+
+### 3. Mengapa `CookieRequest` perlu dibagikan ke semua komponen?
+Instance `CookieRequest` menyimpan data sesi login (cookies). Agar status login konsisten di seluruh aplikasi (dari halaman Login, ke Menu, ke Form, ke List), semua halaman harus menggunakan **instance yang sama**. Jika kita membuat instance baru di setiap halaman, cookies login akan hilang, dan pengguna dianggap logout. Oleh karena itu, kita menggunakan **Provider** di `main.dart` untuk membagikan satu instance `CookieRequest` ke seluruh *widget tree*.
+
+### 4. Konfigurasi Konektivitas
+Agar Flutter (di Emulator Android) bisa bicara dengan Django (di Localhost komputer):
+1.  **`10.0.2.2` di `ALLOWED_HOSTS`:** Emulator Android melihat `localhost` komputer kita sebagai `10.0.2.2`. Django memblokir host yang tidak dikenal demi keamanan, jadi kita harus mengizinkan alamat ini.
+2.  **`CORS_ALLOW_ALL_ORIGINS = True`:** Mengizinkan aplikasi dari *origin* berbeda (Flutter) untuk mengakses resource Django.
+3.  **`android.permission.INTERNET`:** Android secara default memblokir akses internet aplikasi untuk keamanan/privasi. Kita harus meminta izin ini di `AndroidManifest.xml` agar aplikasi bisa mengirim request.
+
+**Jika tidak dikonfigurasi:**
+Request dari Flutter akan ditolak oleh Django (Error 400 Bad Request atau Network Error), atau diblokir oleh Android OS (Permission Denied).
+
+### 5. Mekanisme Pengiriman Data (Input -> Tampil)
+1.  **Input:** Pengguna mengisi form di Flutter (`TextFormField`).
+2.  **Serialization:** Data input diubah menjadi format JSON menggunakan `jsonEncode`.
+3.  **Request:** Flutter mengirim HTTP POST request berisi JSON tersebut ke endpoint Django (misal `/create-flutter/`) menggunakan `CookieRequest`.
+4.  **Backend Processing:** Django menerima request, mem-parsing JSON, membuat objek Model baru, dan menyimpannya ke database.
+5.  **Fetching:** Untuk menampilkan, Flutter mengirim HTTP GET request ke endpoint JSON Django (`/json/`).
+6.  **Deserialization:** Flutter menerima respon JSON, lalu mengubahnya menjadi objek Dart (`Product` model) menggunakan `fromJson`.
+7.  **Display:** Objek Dart tersebut ditampilkan di UI menggunakan widget seperti `ListView` atau `GridView`.
+
+### 6. Mekanisme Autentikasi
+1.  **Login:**
+    * Flutter mengirim `username` & `password` ke endpoint `/auth/login/`.
+    * Django memverifikasi kredensial. Jika valid, Django membuat sesi dan mengembalikan **session cookie**.
+    * `CookieRequest` di Flutter menyimpan cookie ini.
+2.  **Session:**
+    * Setiap request berikutnya dari Flutter akan menyertakan cookie ini.
+    * Django membaca cookie untuk mengetahui siapa pengguna yang sedang login.
+3.  **Logout:**
+    * Flutter mengirim request ke `/auth/logout/`.
+    * Django menghapus sesi di server.
+    * `CookieRequest` menghapus cookie di lokal. Pengguna kembali ke status *anonymous*.
+
+### 7. Implementasi Checklist Step-by-Step
+1.  **Persiapan:** Menambahkan dependency `provider`, `pbp_django_auth` di Flutter dan konfigurasi `CORS`, `ALLOWED_HOSTS` di Django.
+2.  **Model:** Membuat file `models/product.dart` dengan menggunakan Quicktype untuk menyesuaikan struktur JSON dari Django.
+3.  **Auth:**
+    * Membuat `login.dart` dan `register.dart` yang menggunakan `CookieRequest` untuk POST ke endpoint auth Django.
+    * Memasang `Provider` di `main.dart` untuk menyebarkan `CookieRequest`.
+4.  **Halaman List (`list_product.dart`):**
+    * Menggunakan `FutureBuilder` untuk memanggil fungsi `fetchProduct`.
+    * Fungsi `fetchProduct` melakukan GET ke `/json/`.
+    * Data JSON diparsing menjadi `List<Product>`.
+    * Menampilkan data dalam `ListView`.
+5.  **Halaman Detail (`detail_product.dart`):**
+    * Membuat halaman yang menerima parameter `Product`.
+    * Menampilkan seluruh atribut (`name`, `price`, `description`, dll) dalam UI yang rapi.
+    * Menambahkan tombol "Back".
+6.  **Navigasi:**
+    * Menambahkan menu "Daftar Produk" di `left_drawer.dart`.
+    * Menghubungkan `InkWell` pada `ListView` item ke halaman detail.

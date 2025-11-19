@@ -39,7 +39,7 @@ class MyHomePage extends StatelessWidget {
                   ),
                 ),
               ),
-              // Gunakan GridView untuk menampilkan card
+              // Menggunakan GridView untuk menampilkan card
               GridView.count(
                 primary: true,
                 padding: const EdgeInsets.all(20),
@@ -48,7 +48,7 @@ class MyHomePage extends StatelessWidget {
                 crossAxisCount: 3,
                 shrinkWrap: true,
                 children: items.map((ShopItem item) {
-                  // Gunakan ShopCard dari file widget
+                  // Menggunakan ShopCard dari file widget
                   return ShopCard(item);
                 }).toList(),
               ),

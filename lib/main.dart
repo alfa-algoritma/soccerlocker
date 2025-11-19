@@ -1,24 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:soccerlocker/screens/menu.dart'; 
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:soccerlocker/screens/login.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SoccerLocker', 
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        scaffoldBackgroundColor: Colors.grey[100],
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return Provider(
+      create: (_) {
+        CookieRequest request = CookieRequest();
+        return request;
+      },
+      child: MaterialApp(
+        title: 'SoccerLocker',
+        theme: ThemeData(
+          primarySwatch: Colors.indigo,
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.indigo),
+          useMaterial3: true,
+        ),
+        home: const LoginPage(),
       ),
-      // Langsung panggil MyHomePage dari menu.dart
-      home: MyHomePage(),
     );
   }
 }
