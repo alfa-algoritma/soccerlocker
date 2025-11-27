@@ -16,7 +16,7 @@ class ShopItem {
 class ShopCard extends StatelessWidget {
   final ShopItem item;
 
-  const ShopCard(this.item, {Key? key}) : super(key: key);
+  const ShopCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +31,7 @@ class ShopCard extends StatelessWidget {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(
-              content: Text("Kamu telah menekan tombol ${item.name}!"),
-            ));
-          
+                content: Text("Kamu telah menekan tombol ${item.name}!")));
           if (item.name == "Create Product") {
             Navigator.push(
               context,
@@ -41,26 +39,31 @@ class ShopCard extends StatelessWidget {
                 builder: (context) => const ProductFormPage(),
               ),
             );
-          } else if (item.name == "All Products") { 
+          } 
+          else if (item.name == "All Products") { 
              Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const ProductListPage(),
               ),
             );
-          } else if (item.name == "Logout") {
+          } 
+          else if (item.name == "Logout") {
               final response = await request.logout(
                   "https://muhammad-alfa41-playmax.pbp.cs.ui.ac.id/auth/logout/");
+              
               String message = response["message"];
+              
               if (context.mounted) {
                   if (response['status']) {
                       String uname = response["username"];
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text("$message Sampai jumpa, $uname."),
                       ));
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const LoginPage()),
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                        (route) => false,
                       );
                   } else {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
